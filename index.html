@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="static/css/style.css">
+    <title>Zabbix</title>
+</head>
+
+<body>
+    <header class="header">
+        <div class="container">
+            <a href="#" class="logo">Tickets</a>
+            <nav class="nav">
+                <a href="#"><i class="bi bi-house-fill"></i> Home</a>
+            </nav>
+        </div>
+    </header>
+    <main>
+        <div class="container">
+            <section class="feature">
+                <div class="feature-content">
+                    <h1>Zabbix Tickets</h1>
+                    <p>Manage your tickets here.</p>
+                    <a class="btn btn-primary cta" href="#">Get Started</a>
+                </div>
+                <img src="static/images/feature.png" alt="" class="feature-image">
+                <br>
+                <div class="ticket-section">
+                    <h1>Host Info</h1>
+                    <table class="neomorphic-table">
+                        <thead>
+                            <tr>
+                                <th>Timestamp</th>
+                                <th>Hostname</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="host-info-body"></tbody>
+                    </table>
+                </div>
+
+                <div class="ticket-section">
+                    <h1>🔴 Tickets Issued 🔴</h1>
+                    <table class="neomorphic-table">
+                        <thead>
+                            <tr>
+                                <th>Time</th>
+                                <th>Severity</th>
+                                <th>Description</th>
+                                <th>Host</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tickets-issued-body"></tbody>
+                    </table>
+                </div>
+
+                <div class="ticket-section">
+                    <h1> 🟢 Solved Issues 🟢 </h1>
+                    <table class="neomorphic-table">
+                        <thead>
+                            <tr>
+                                <th>Time</th>
+                                <th>Severity</th>
+                                <th>Description</th>
+                                <th>Host</th>
+                                <th>Recovered Time</th>
+                            </tr>
+                        </thead>
+                        <tbody id="solved-issues-body"></tbody>
+                    </table>
+                </div>
+            </section>
+        </div>
+    </main>
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; Copyright
+                <span id="current-year"></span> by <a href="">Anmol</a>
+            </p>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            fetch("static/host.json")
+                .then(response => response.json())
+                .then(data => {
+                    const tableBody = document.getElementById("host-info-body");
+                    data.forEach(host => {
+                        const row = document.createElement("tr");
+                        row.innerHTML = `
+                            <td>${host.Timestamp}</td>
+                            <td>${host.Hostname}</td>
+                            <td>${host.StatusEmoji} ${host.Status}</td>
+                        `;
+                        tableBody.appendChild(row);
+                    });
+                });
+
+            fetch("static/problems.json")
+                .then(response => response.json())
+                .then(data => {
+                    const tableBody = document.getElementById("tickets-issued-body");
+                    data.forEach(problem => {
+                        const row = document.createElement("tr");
+                        row.innerHTML = `
+                            <td>${problem.Time}</td>
+                            <td>${problem.Severity}</td>
+                            <td>${problem.Description}</td>
+                            <td>${problem.Host}</td>
+                        `;
+                        tableBody.appendChild(row);
+                    });
+                });
+
+            fetch("static/history.json")
+                .then(response => response.json())
+                .then(data => {
+                    const tableBody = document.getElementById("solved-issues-body");
+                    data.forEach(solvedIssue => {
+                        const row = document.createElement("tr");
+                        row.innerHTML = `
+                            <td>${solvedIssue.Time}</td>
+                            <td>${solvedIssue.Severity}</td>
+                            <td>${solvedIssue.Description}</td>
+                            <td>${solvedIssue.Host}</td>
+                            <td>${solvedIssue.RTime}</td>
+                        `;
+                        tableBody.appendChild(row);
+                    });
+                });
+
+            const currentYear = new Date().getFullYear();
+            document.getElementById("current-year").textContent = currentYear;
+        });
+    </script>
+</body>
+
+</html>
